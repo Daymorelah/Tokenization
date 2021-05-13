@@ -1,3 +1,4 @@
-import aesController from './aesController';
+import AESController from './aesController';
+import Chacha20Controller from './chacha20Controller';
 
-export default aesController;
+export { AESController, Chacha20Controller, };
