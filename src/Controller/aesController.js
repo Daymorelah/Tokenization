@@ -1,5 +1,5 @@
 import {
-  createHash, createCipheriv, pseudoRandomBytes,
+  createHash, createCipheriv, createDecipheriv, pseudoRandomBytes,
 } from 'crypto';
 import { HelperMethods, Authentication, } from '../../utils';
 
@@ -9,20 +9,34 @@ import { HelperMethods, Authentication, } from '../../utils';
  * @description AES-256 controller
  */
 class aesController {
+  // Generate pseudorandom IV. Its length must be 16 bytes.
+  /* eslint-disable */
+  static initializationVector = '';
+  static myKey = '';
+
+  static async setKeyAndIv(hashedPassword) {
+    // Ensure the key length is compatible with the algorithm chosen, i.e aes-256. The key length should be 32.
+    const generatedKey = Buffer.alloc(32, hashedPassword, 'hex');
+    // Generate pseudorandom IV. Its length must be 16 bytes.
+    const initializationVector = Buffer.alloc(16, pseudoRandomBytes(16));  
+    aesController.generatedKey = generatedKey;
+    aesController.initializationVector = initializationVector;
+  }
+
   static async encryptToken(req, res) {
     try {
       // Get user supplied data and password from the request body.
       const { data, password } = req.body;
-      // Generate token from user-supplied data.
+      // Generate token from user-supplied data. Remember to set your JWT secret key in the '.env' file.
       const tokenCreated = await Authentication.getToken({ ...data, });
       // Hash the password and git output in Hex format
       const hashedPassword = createHash('sha256').update(password).digest('hex');
-      // Ensure the key length is compatible with the algorithm chosen, i.e aes-256. The key length should be 32.
-      const generatedKey = Buffer.alloc(32, hashedPassword, 'hex');
-      // Generate pseudorandom IV. Its length must be 16 bytes.
-      const initializationVector = Buffer.alloc(16, pseudoRandomBytes(16));
+      // Call class method to set the IV and key
+      aesController.setKeyAndIv(hashedPassword);
       // Create a cipher text with the aes-256-cbc algorithm.
-      const cypherText = createCipheriv('aes-256-cbc', generatedKey, initializationVector);
+      const cypherText = createCipheriv(
+        'aes-256-cbc', aesController.generatedKey, aesController.initializationVector
+      );
       // Encrypt the data and output in base64 format.
       let encryptedData = cypherText.update(tokenCreated, 'utf-8', 'base64');
       encryptedData += cypherText.final('base64');
@@ -32,9 +46,27 @@ class aesController {
         message: 'Data encrypted successfully',
         encryptedData,
       });
-    } catch (e) {
-      console.log('error is ==> ', e);
-      return HelperMethods.serverError(res);
+    } catch (error) {
+      return HelperMethods.serverError(res, error.message);
+    }
+  }
+
+  static async decryptToken(req, res) {
+    try {
+      const { encryptedToken, } = req.body;
+      const decipherText = createDecipheriv(
+        'aes-256-cbc', aesController.generatedKey, aesController.initializationVector,
+      );
+      let decipheredToken = decipherText.update(encryptedToken, 'base64');
+      decipheredToken += decipherText.final();
+      const token = await Authentication.verifyToken(decipheredToken);
+      return res.status(200).json({
+        success: true,
+        message: 'Token decrypted successfully',
+        token,
+      });
+    } catch(error) {
+      return HelperMethods.serverError(res, error.message);
     }
   }
 }

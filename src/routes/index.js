@@ -17,6 +17,10 @@ const routes = app => {
     '/api/v1/aes_encrypt',
     AESController.encryptToken,
   );
+  app.post(
+    '/api/v1/aes_decrypt',
+    AESController.decryptToken,
+  );
 };
 
 export default routes;

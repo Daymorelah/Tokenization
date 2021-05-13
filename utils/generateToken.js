@@ -16,10 +16,7 @@ class Authentication {
    * @returns {string} - returns a jwt token
    */
   static async getToken(payload, expiresIn = '24h') {
-    const token = jwt.sign({
-      id: payload.id,
-      username: payload.username,
-    }, process.env.JWT_SECRET, {
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn
     });
     return token;
@@ -44,11 +41,7 @@ class Authentication {
             success: false
           };
         } else {
-          output = {
-            success: true,
-            id: decoded.id,
-            username: decoded.username,
-          };
+          output = { success: true, decoded, };
         }
         return output;
       }
