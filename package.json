@@ -1,0 +1,37 @@
+{
+  "name": "tokenization",
+  "version": "1.0.0",
+  "description": "a simple app that explores the use of tokenization",
+  "main": "index.js",
+  "author": "Ademola Hussain <demola.hussainin@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev-start": "set NODE_ENV=development && nodemon --exec babel-node src/index.js"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.9",
+    "@babel/node": "^7.12.6",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/runtime": "^7.12.5",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "chacha20": "^0.1.4",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.15.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "nodemon": "^2.0.6"
+  }
+}
