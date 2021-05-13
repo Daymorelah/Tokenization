@@ -43,6 +43,7 @@ class aesController {
           encryptedToken,
         });
       }
+      // If any thing goes wrong execute the line of code below.
       return res.status(400).json({ success: false, message: 'Could not encrypt the token. Please, try again.' });
     } catch (error) {
       return HelperMethods.serverError(res, error.message);
@@ -51,18 +52,23 @@ class aesController {
 
   static async decryptToken(req, res) {
     try {
+      // Get user supplied data and password from the request body.
       const { encryptedToken, } = req.body;
+      // Decrypt the encrypted token
       const decipherText = createDecipheriv('aes-256-cbc', generatedKey, initializationVector);
       let decipheredToken = decipherText.update(encryptedToken, 'base64');
       decipheredToken += decipherText.final();
+      // verify the validity of the token
       const token = await Authentication.verifyToken(decipheredToken);
       if (token.success) {
+        // Send response to the client
         return res.status(200).json({
           success: true,
           message: 'Token decrypted successfully',
           token,
         });
       }
+      // If any thing goes wrong execute the line of code below.
       return res.status(400).json({ ...token, });
     } catch (error) {
       return HelperMethods.serverError(res, error.message);

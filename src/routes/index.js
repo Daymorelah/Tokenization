@@ -25,6 +25,10 @@ const routes = app => {
     '/api/v1/chacha20_encrypt',
     Chacha20Controller.encrypt,
   );
+  app.post(
+    '/api/v1/chacha20_decrypt',
+    Chacha20Controller.decrypt,
+  );
 };
 
 export default routes;
