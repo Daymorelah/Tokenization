@@ -1,3 +1,4 @@
 import HelperMethods from './helperMethods';
+import Authentication from './generateToken';
 
-export default HelperMethods;
+export { HelperMethods, Authentication, };

@@ -5,7 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import routes from './routes';
-import HelperMethods from '../utils';
+import { HelperMethods, } from '../utils';
 
 dotenv.config();
 

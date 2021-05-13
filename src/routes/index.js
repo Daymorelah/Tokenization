@@ -1,3 +1,5 @@
+import AESController from '../Controller/index';
+
 /**
  * Handles request
  * @param {object} app - An instance of the express module
@@ -11,6 +13,10 @@ const routes = app => {
       message: 'Welcome to the API'
     });
   });
+  app.post(
+    '/api/v1/aes_encrypt',
+    AESController.encryptToken,
+  );
 };
 
 export default routes;
