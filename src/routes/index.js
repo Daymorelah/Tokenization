@@ -33,6 +33,10 @@ const routes = app => {
     '/api/v1/rsa_encrypt',
     RSAController.encryptToken,
   );
+  app.post(
+    '/api/v1/rsa_decrypt',
+    RSAController.decryptToken,
+  );
 };
 
 export default routes;
