@@ -30,12 +30,12 @@ class TokenController {
     try {
       const { payload, } = req.body;
       // Generate token from user-supplied data. Remember to set your JWT secret key in the '.env' file.
-      const tokenCreated = await Authentication.verifyToken({ ...payload, });
+      const tokenCreated = await Authentication.verifyToken(payload);
       if (tokenCreated) {
       // Send response to the client or whoever used our API
         return res.status(200).json({
           success: true,
-          message: 'Token created successfully',
+          message: 'Token verified successfully',
           tokenCreated,
         });
       }
