@@ -1,4 +1,6 @@
-import { AESController, Chacha20Controller, RSAController, } from '../Controller/index';
+import {
+  AESController, Chacha20Controller, RSAController, ECController,
+} from '../Controller/index';
 
 /**
  * Handles request
@@ -36,6 +38,10 @@ const routes = app => {
   app.post(
     '/api/v1/rsa_decrypt',
     RSAController.decryptToken,
+  );
+  app.post(
+    '/api/v1/ec_encrypt',
+    ECController.encryptToken,
   );
 };
 

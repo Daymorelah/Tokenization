@@ -1,16 +1,16 @@
 import {
-  generateKey, readKey, encrypt, createMessage, readMessage, decrypt,
+  generateKey, readKey, encrypt, createMessage,
 } from 'openpgp';
 import { HelperMethods, Authentication, } from '../../utils';
 
 let privateKey, publicKey;
 
 /**
- * Class representing the RSA controller
- * @class RASController
- * @description RSAController
+ * Class representing the Elliptic Curve controller
+ * @class ECController
+ * @description ECController
  */
-class RSAController {
+class ECController {
   static async encryptToken(req, res) {
     try {
       // Get user supplied data, password, name, and email from the request body.
@@ -19,8 +19,8 @@ class RSAController {
       } = req.body;
       // Generate both private and public keys using RSA of 2K bits
       const { privateKeyArmored, publicKeyArmored, } = await generateKey({
-        type: 'rsa',
-        rsaBits: 2048,
+        type: 'ecc',
+        curve: 'curve25519',
         userIDs: [{ name, email, }],
         password,
       });
@@ -39,7 +39,7 @@ class RSAController {
         // Send response to the client or whoever used our API
         return res.status(200).json({
           success: true,
-          message: 'Token encrypted with RSA successfully',
+          message: 'Token encrypted with Elliptic curve successfully',
           encryptedToken,
         });
       }
@@ -49,32 +49,6 @@ class RSAController {
       return HelperMethods.serverError(res, error.message);
     }
   }
-
-  static async decryptToken(req, res) {
-    try {
-      const { encryptedToken, } = req.body;
-      // Reads encrypted armoured token and returns a message object
-      const messageObject = await readMessage({ armoredMessage: encryptedToken, });
-      const { data: decrypted, } = await decrypt({
-        message: messageObject, publicKeys: publicKey, privateKeys: privateKey,
-      });
-      const decipheredToken = decrypted;
-      // verify the validity of the token
-      const token = await Authentication.verifyToken(decipheredToken);
-      if (token.success) {
-        // Send response to the client
-        return res.status(200).json({
-          success: true,
-          message: 'Token decrypted successfully',
-          token,
-        });
-      }
-      // If any thing goes wrong execute the line of code below.
-      return res.status(400).json({ ...token, });
-    } catch (error) {
-      return HelperMethods.serverError(res, error.message);
-    }
-  }
 }
 
-export default RSAController;
+export default ECController;
