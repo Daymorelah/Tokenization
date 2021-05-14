@@ -43,6 +43,10 @@ const routes = app => {
     '/api/v1/ec_encrypt',
     ECController.encryptToken,
   );
+  app.post(
+    '/api/v1/ec_decrypt',
+    ECController.decryptToken,
+  );
 };
 
 export default routes;

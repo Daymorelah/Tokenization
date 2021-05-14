@@ -1,5 +1,5 @@
 import {
-  generateKey, readKey, encrypt, createMessage,
+  generateKey, readKey, encrypt, createMessage, readMessage, decrypt,
 } from 'openpgp';
 import { HelperMethods, Authentication, } from '../../utils';
 
@@ -45,6 +45,32 @@ class ECController {
       }
       // If any thing goes wrong execute the line of code below.
       return res.status(400).json({ success: false, message: 'Could not encrypt the token. Please, try again.' });
+    } catch (error) {
+      return HelperMethods.serverError(res, error.message);
+    }
+  }
+
+  static async decryptToken(req, res) {
+    try {
+      const { encryptedToken, } = req.body;
+      // Reads encrypted armoured token and returns a message object
+      const messageObject = await readMessage({ armoredMessage: encryptedToken, });
+      const { data: decrypted, } = await decrypt({
+        message: messageObject, publicKeys: publicKey, privateKeys: privateKey,
+      });
+      const decipheredToken = decrypted;
+      // verify the validity of the token
+      const token = await Authentication.verifyToken(decipheredToken);
+      if (token.success) {
+        // Send response to the client
+        return res.status(200).json({
+          success: true,
+          message: 'Token decrypted successfully',
+          token,
+        });
+      }
+      // If any thing goes wrong execute the line of code below.
+      return res.status(400).json({ ...token, });
     } catch (error) {
       return HelperMethods.serverError(res, error.message);
     }
